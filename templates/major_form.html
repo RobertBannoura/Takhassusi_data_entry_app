@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card stack-lg">
+  <div>
+    <h2>{{ 'Edit Major' if major else 'Add Major' }}</h2>
+    <p class="muted">English and Arabic fields are paired. Each cutoff row can store regular cutoff, regular credit hour price, first semester tuition for year 1, and موازي details.</p>
+  </div>
+
+  <form method="post" class="stack-lg">
+    <div class="pair-grid">
+      <div>
+        <label>University</label>
+        <select name="university_id" required>
+          {% set current_uni_id = major.university_id if major else (selected_university.university_id if selected_university else '') %}
+          {% for uni in universities %}
+            <option value="{{ uni.university_id }}" {% if current_uni_id == uni.university_id %}selected{% endif %}>
+              {{ uni.university_name_en }} / {{ uni.university_name_ar }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div></div>
+
+      <div>
+        <label>Faculty / Department (EN)</label>
+        <input list="faculty_en_list" name="faculty_name_en" value="{{ major.faculty_name_en if major else sticky.get('faculty_name_en', '') }}">
+        <datalist id="faculty_en_list">
+          {% for f in faculties %}
+            <option value="{{ f.faculty_name_en }}">
+          {% endfor %}
+        </datalist>
+      </div>
+      <div>
+        <label>Faculty / Department (AR)</label>
+        <input class="rtl-input" dir="rtl" list="faculty_ar_list" name="faculty_name_ar" value="{{ major.faculty_name_ar if major else sticky.get('faculty_name_ar', '') }}">
+        <datalist id="faculty_ar_list">
+          {% for f in faculties %}
+            <option value="{{ f.faculty_name_ar }}">
+          {% endfor %}
+        </datalist>
+      </div>
+
+      <div>
+        <label>Major name (EN)</label>
+        <input name="major_name_en" value="{{ major.major_name_en if major else '' }}" required>
+      </div>
+      <div>
+        <label>Major name (AR)</label>
+        <input class="rtl-input" dir="rtl" name="major_name_ar" value="{{ major.major_name_ar if major else '' }}" required>
+      </div>
+
+      <div>
+        <label>Degree type</label>
+        <select name="degree_type">
+          {% set degree_value = major.degree_type if major else sticky.get('degree_type', '') %}
+          {% for item in degree_types %}
+            <option value="{{ item }}" {% if degree_value == item %}selected{% endif %}>
+              {{ item.replace('_', ' ')|title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Duration (years)</label>
+        <input type="number" step="0.5" name="duration_years" value="{{ major.duration_years if major else sticky.get('duration_years', '') }}">
+      </div>
+
+      <div>
+        <label>Language of study</label>
+        <select name="language_of_study">
+          {% set lang_value = major.language_of_study if major else sticky.get('language_of_study', '') %}
+          {% for item in languages %}
+            <option value="{{ item }}" {% if lang_value == item %}selected{% endif %}>
+              {{ item.replace('_', ' ')|title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Total hour credits</label>
+        <input type="number" step="0.5" name="total_hour_credits" value="{{ major.total_hour_credits if major else sticky.get('total_hour_credits', '') }}">
+      </div>
+
+      <div>
+        <label>Program option type</label>
+        {% set option_value = major.program_option_type if major else sticky.get('program_option_type', 'major') %}
+        <div class="radio-grid">
+          {% for value_en, value_ar in program_option_types %}
+            <label class="radio-card">
+              <input type="radio" name="program_option_type" value="{{ value_en }}" {% if option_value == value_en %}checked{% endif %}>
+              <div>
+                <strong>{{ value_en.replace('_', ' ')|title }}</strong>
+                <div class="rtl-text muted">{{ value_ar }}</div>
+              </div>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <label>Study plan link</label>
+        <input name="study_plan_link" value="{{ major.study_plan_link if major else sticky.get('study_plan_link', '') }}">
+      </div>
+
+      <div class="full-span">
+        <label>Major categories</label>
+        <div class="checkbox-grid">
+          {% for en, ar in major_categories %}
+            <label class="checkbox-card">
+              <input type="checkbox" name="major_categories[]" value="{{ en }}" {% if en in selected_categories %}checked{% endif %}>
+              <div>
+                <strong>{{ en }}</strong>
+                <div class="rtl-text muted">{{ ar }}</div>
+              </div>
+            </label>
+          {% endfor %}
+        </div>
+        <p class="muted small">You can choose more than one category for the same major.</p>
+      </div>
+
+      <div>
+        <label>Major description (EN)</label>
+        <textarea name="major_description_en">{{ major.major_description_en if major else '' }}</textarea>
+      </div>
+      <div>
+        <label>Major description (AR)</label>
+        <textarea class="rtl-input" dir="rtl" name="major_description_ar">{{ major.major_description_ar if major else '' }}</textarea>
+      </div>
+
+      <div>
+        <label>Career opportunities (EN)</label>
+        <textarea name="career_opportunities_en">{{ major.career_opportunities_en if major else '' }}</textarea>
+      </div>
+      <div>
+        <label>Career opportunities (AR)</label>
+        <textarea class="rtl-input" dir="rtl" name="career_opportunities_ar">{{ major.career_opportunities_ar if major else '' }}</textarea>
+      </div>
+    </div>
+
+    <div class="cutoff-card">
+      <div class="row between align-center">
+        <h3>Cutoffs and prices</h3>
+        <button type="button" class="btn btn-light" onclick="addCutoffRow()">Add cutoff row</button>
+      </div>
+      <p class="muted">Each row represents one Tawjihi stream with regular cutoff, regular credit hour price, first semester tuition for year 1, and موازي details.</p>
+
+      <div id="cutoffRows" class="stack-md">
+        {% for c in cutoffs %}
+        <div class="cutoff-row">
+          <div>
+            <label>Stream (EN)</label>
+            <select name="cutoff_stream_en[]" onchange="syncArabicStream(this)">
+              {% for stream in streams %}
+                <option value="{{ stream.en }}" data-ar="{{ stream.ar }}" {% if c.tawjihi_stream_en == stream.en %}selected{% endif %}>{{ stream.en }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label>Stream (AR)</label>
+            <input class="rtl-input" dir="rtl" name="cutoff_stream_ar[]" value="{{ c.tawjihi_stream_ar }}" readonly>
+          </div>
+
+          <div>
+            <label>Regular cutoff</label>
+            <input type="number" step="0.01" name="cutoff_average[]" value="{{ c.cutoff_average if c.cutoff_average is not none else '' }}">
+          </div>
+
+          <div>
+            <label>Regular credit hour price</label>
+            <input type="number" step="0.01" name="regular_credit_hour_price[]" value="{{ c.regular_credit_hour_price if c.regular_credit_hour_price is not none else sticky.get('regular_credit_hour_price', '') }}">
+          </div>
+
+          <div>
+            <label>First semester tuition (Year 1)</label>
+            <input type="number" step="0.01" name="first_semester_year1_tuition[]" value="{{ c.first_semester_year1_tuition if c.first_semester_year1_tuition is not none else sticky.get('first_semester_year1_tuition', '') }}">
+          </div>
+
+          <div>
+            <label>Parallel cutoff (موازي)</label>
+            <input type="number" step="0.01" name="parallel_admission_cutoff[]" value="{{ c.parallel_admission_cutoff if c.parallel_admission_cutoff is not none else '' }}">
+          </div>
+
+          <div>
+            <label>Parallel credit hour price</label>
+            <input type="number" step="0.01" name="parallel_credit_hour_price[]" value="{{ c.parallel_credit_hour_price if c.parallel_credit_hour_price is not none else sticky.get('parallel_credit_hour_price', '') }}">
+          </div>
+
+          <div>
+            <label>Currency</label>
+            <select name="cutoff_currency[]">
+              {% for item in currencies %}
+                <option value="{{ item }}" {% if (c.currency if c.currency is not none else sticky.get('cutoff_currency', 'JOD')) == item %}selected{% endif %}>{{ item }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="remove-wrap">
+            <button type="button" class="btn btn-light" onclick="this.closest('.cutoff-row').remove()">Remove</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row gap-sm">
+      <button class="btn btn-primary" type="submit">{{ 'Update Major' if major else 'Create Major' }}</button>
+      <a class="btn btn-light" href="{{ url_for('index') }}">Back</a>
+    </div>
+  </form>
+</section>
+
+<template id="cutoffRowTemplate">
+  <div class="cutoff-row">
+    <div>
+      <label>Stream (EN)</label>
+      <select name="cutoff_stream_en[]" onchange="syncArabicStream(this)">
+        {% for stream in streams %}
+          <option value="{{ stream.en }}" data-ar="{{ stream.ar }}" {% if loop.first %}selected{% endif %}>{{ stream.en }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label>Stream (AR)</label>
+      <input class="rtl-input" dir="rtl" name="cutoff_stream_ar[]" value="{{ streams[0].ar }}" readonly>
+    </div>
+
+    <div>
+      <label>Regular cutoff</label>
+      <input type="number" step="0.01" name="cutoff_average[]">
+    </div>
+
+    <div>
+      <label>Regular credit hour price</label>
+      <input type="number" step="0.01" name="regular_credit_hour_price[]" value="{{ sticky.get('regular_credit_hour_price', '') }}">
+    </div>
+
+    <div>
+      <label>First semester tuition (Year 1)</label>
+      <input type="number" step="0.01" name="first_semester_year1_tuition[]" value="{{ sticky.get('first_semester_year1_tuition', '') }}">
+    </div>
+
+    <div>
+      <label>Parallel cutoff (موازي)</label>
+      <input type="number" step="0.01" name="parallel_admission_cutoff[]">
+    </div>
+
+    <div>
+      <label>Parallel credit hour price</label>
+      <input type="number" step="0.01" name="parallel_credit_hour_price[]" value="{{ sticky.get('parallel_credit_hour_price', '') }}">
+    </div>
+
+    <div>
+      <label>Currency</label>
+      <select name="cutoff_currency[]">
+        {% for item in currencies %}
+          <option value="{{ item }}" {% if item == sticky.get('cutoff_currency', 'JOD') %}selected{% endif %}>{{ item }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="remove-wrap">
+      <button type="button" class="btn btn-light" onclick="this.closest('.cutoff-row').remove()">Remove</button>
+    </div>
+  </div>
+</template>
+
+<script>
+function addCutoffRow() {
+  const tpl = document.getElementById('cutoffRowTemplate');
+  const clone = tpl.content.cloneNode(true);
+  document.getElementById('cutoffRows').appendChild(clone);
+}
+
+function syncArabicStream(selectEl) {
+  const row = selectEl.closest('.cutoff-row');
+  const arInput = row.querySelector('input[name="cutoff_stream_ar[]"]');
+  const selected = selectEl.options[selectEl.selectedIndex];
+  arInput.value = selected.dataset.ar || '';
+}
+</script>
+{% endblock %}

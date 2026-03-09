@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card stack-lg">
+  <div>
+    <h2>{{ 'Edit University' if university else 'Add University' }}</h2>
+    <p class="muted">Keep English and Arabic fields side by side for faster entry.</p>
+  </div>
+
+  <form method="post" class="stack-lg">
+    <div class="pair-grid">
+      <div>
+        <label>University name (EN)</label>
+        <input name="university_name_en" value="{{ university.university_name_en if university else '' }}" required>
+      </div>
+      <div>
+        <label>University name (AR)</label>
+        <input class="rtl-input" dir="rtl" name="university_name_ar" value="{{ university.university_name_ar if university else '' }}" required>
+      </div>
+
+      <div>
+        <label>City (EN)</label>
+        <input name="city_en" value="{{ university.city_en if university else '' }}">
+      </div>
+      <div>
+        <label>City (AR)</label>
+        <input class="rtl-input" dir="rtl" name="city_ar" value="{{ university.city_ar if university else '' }}">
+      </div>
+
+      <div>
+        <label>Official website</label>
+        <input name="official_website" value="{{ university.official_website if university else '' }}">
+      </div>
+      <div>
+        <label>University type</label>
+        <select name="university_type">
+          {% set type_value = university.university_type if university else '' %}
+          {% for item in university_types %}
+            <option value="{{ item }}" {% if type_value == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label>Founded year</label>
+        <input type="number" name="founded_year" value="{{ university.founded_year if university else '' }}">
+      </div>
+      <div>
+        <label>Student count</label>
+        <input type="number" name="student_count" value="{{ university.student_count if university else '' }}">
+      </div>
+
+      <div>
+        <label>Global ranking</label>
+        <input type="number" name="global_ranking" value="{{ university.global_ranking if university else '' }}">
+      </div>
+      <div>
+        <label>Local ranking</label>
+        <input type="number" name="local_ranking" value="{{ university.local_ranking if university else '' }}">
+      </div>
+
+      <div>
+        <label>Contact email</label>
+        <input name="contact_email" value="{{ university.contact_email if university else '' }}">
+      </div>
+      <div>
+        <label>Contact phone</label>
+        <input name="contact_phone" value="{{ university.contact_phone if university else '' }}">
+      </div>
+
+      <div>
+        <label>Contact address (EN)</label>
+        <input name="contact_address_en" value="{{ university.contact_address_en if university else '' }}">
+      </div>
+      <div>
+        <label>Contact address (AR)</label>
+        <input class="rtl-input" dir="rtl" name="contact_address_ar" value="{{ university.contact_address_ar if university else '' }}">
+      </div>
+
+      <div>
+        <label>Logo path</label>
+        <input name="logo_path" value="{{ university.logo_path if university else '' }}">
+      </div>
+      <div></div>
+
+      <div>
+        <label>Description (EN)</label>
+        <textarea name="description_en">{{ university.description_en if university else '' }}</textarea>
+      </div>
+      <div>
+        <label>Description (AR)</label>
+        <textarea class="rtl-input" dir="rtl" name="description_ar">{{ university.description_ar if university else '' }}</textarea>
+      </div>
+    </div>
+
+    <div class="row gap-sm">
+      <button class="btn btn-primary" type="submit">{{ 'Update University' if university else 'Create University' }}</button>
+      <a class="btn btn-light" href="{{ url_for('index') }}">Back</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

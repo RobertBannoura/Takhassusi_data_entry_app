@@ -1,0 +1,9 @@
+﻿university_id,university_name_en,university_name_ar,city_en,city_ar,official_website,description_en,description_ar,logo_path,contact_email,contact_phone,contact_address_en,contact_address_ar,university_type,created_at
+1,Birzeit University,جامعة بيرزيت,"Birzeit, Ramallah",بيرزيت، رام الله,https://www.birzeit.edu,,,,,,,,Public,2026-03-07 05:00:50
+2,An-Najah National University,جامعة النجاح الوطنية,Nablus,نابلس,https://www.najah.edu,,,,,,,,Public,2026-03-07 05:00:50
+3,Bethlehem University,جامعة بيت لحم,Bethlehem,بيت لحم,https://www.bethlehem.edu,,,,,,,,Private,2026-03-07 05:00:50
+4,Hebron University,جامعة الخليل,Hebron,الخليل,https://www.hebron.edu,,,,,,,,Public,2026-03-07 05:00:50
+5,Palestine Polytechnic University,جامعة بوليتكنك فلسطين,Hebron,الخليل,https://www.ppu.edu,,,,,,,,Public,2026-03-07 05:00:50
+6,Al-Quds University,جامعة القدس,Jerusalem / Abu Dis,القدس / أبو ديس,https://www.alquds.edu,,,,,,,,Public,2026-03-07 05:00:50
+7,Arab American University,الجامعة العربية الأمريكية,Jenin / Ramallah,جنين / رام الله,https://www.aaup.edu,,,,,,,,Private,2026-03-07 05:00:50
+8,Palestine Technical University – Kadoorie,جامعة فلسطين التقنية - خضوري,Tulkarm,طولكرم,https://www.ptuk.edu.ps,,,,,,,,Public,2026-03-07 05:00:50

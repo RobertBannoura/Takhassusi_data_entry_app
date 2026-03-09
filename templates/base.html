@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tkhasosi Entry Tool</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Tkhasosi Entry Tool</h1>
+      <p class="muted">Simple staging tool for universities, majors, and cutoffs.</p>
+    </div>
+    <nav class="top-actions">
+      <a class="btn btn-light" href="{{ url_for('index') }}">Home</a>
+      <a class="btn btn-light" href="{{ url_for('university_new') }}">Add University</a>
+      <a class="btn btn-primary" href="{{ url_for('major_new') }}">Add Major</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if current_university %}
+      <div class="context-banner">
+        <div>
+          <strong>Current university:</strong>
+          {{ current_university.university_name_en }}
+          /
+          <span class="rtl-text">{{ current_university.university_name_ar }}</span>
+        </div>
+        <div>
+          <a class="btn btn-light" href="{{ url_for('university_edit', university_id=current_university.university_id) }}">Edit university</a>
+        </div>
+      </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category if category else '' }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="grid-2">
+  <section class="card">
+    <h2>Working university</h2>
+    <form method="post" action="{{ url_for('set_current_university') }}" class="stack-sm">
+      <label>Choose current university</label>
+      <select name="university_id">
+        <option value="">-- None --</option>
+        {% for u in universities %}
+          <option value="{{ u.university_id }}" {% if selected_university and selected_university.university_id == u.university_id %}selected{% endif %}>
+            {{ u.university_name_en }} / {{ u.university_name_ar }}
+          </option>
+        {% endfor %}
+      </select>
+      <div class="row gap-sm">
+        <button class="btn btn-primary" type="submit">Set current</button>
+        {% if selected_university %}
+          <a class="btn btn-light" href="{{ url_for('major_new') }}">Add major to this university</a>
+        {% endif %}
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Exports</h2>
+    <div class="row wrap gap-sm">
+      <a class="btn btn-light" href="{{ url_for('export_json') }}">Export JSON</a>
+      <a class="btn btn-light" href="{{ url_for('export_csv') }}">Export CSV</a>
+      <a class="btn btn-light" href="{{ url_for('export_sql') }}">Export SQL</a>
+    </div>
+  </section>
+</div>
+
+<section class="card">
+  <h2>Search entries</h2>
+  <form method="get" class="search-row">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search by university, faculty, or major name...">
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h2>{% if query %}Search results{% elif selected_university %}Majors in current university{% else %}Recent majors{% endif %}</h2>
+    {% if majors %}
+      <div class="list-table">
+        {% for m in majors %}
+          <a class="list-row" href="{{ url_for('major_edit', major_id=m.major_id) }}">
+            <div>
+              <strong>{{ m.major_name_en }}</strong>
+              <div class="rtl-text">{{ m.major_name_ar }}</div>
+              {% if m.category_names_en %}
+                <div class="tag-row">
+                  {% for cat in m.category_names_en.split(', ') %}
+                    <span class="tag">{{ cat }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            <div>
+              <div>{{ m.faculty_name_en or '-' }}</div>
+              <div class="rtl-text muted">{{ m.faculty_name_ar or '' }}</div>
+            </div>
+            <div class="muted small">{{ m.university_name_en }}</div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No majors found yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Last entries</h2>
+    {% if recent_majors %}
+      <div class="list-table">
+        {% for m in recent_majors %}
+          <a class="list-row" href="{{ url_for('major_edit', major_id=m.major_id) }}">
+            <div>
+              <strong>{{ m.major_name_en }}</strong>
+              <div class="rtl-text">{{ m.major_name_ar }}</div>
+              {% if m.category_names_en %}
+                <div class="tag-row">
+                  {% for cat in m.category_names_en.split(', ') %}
+                    <span class="tag">{{ cat }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            <div class="muted small">{{ m.university_name_en }}</div>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

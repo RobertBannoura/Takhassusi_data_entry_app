@@ -1,0 +1,4 @@
+﻿cutoff_id,major_id,tawjihi_stream_en,tawjihi_stream_ar,cutoff_average,parallel_cutoff_average,parallel_credit_hour_price,created_at
+4,1,Scientific,علمي,93.0,90.0,90.0,2026-03-07 05:07:14
+5,1,Industrial,صناعي,95.0,,,2026-03-07 05:07:14
+6,2,Scientific,علمي,90.0,95.0,350.0,2026-03-07 05:10:19
