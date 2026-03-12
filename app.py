@@ -84,8 +84,9 @@ TAWJIHI_STREAMS = [
     {"en": "Entrepreneurship and Business", "ar": "الريادة والأعمال"},
     {"en": "Agricultural", "ar": "الزراعي"},
     {"en": "Industrial", "ar": "الصناعي"},
-    {"en": "Hotel", "ar": "الفندقي"},
-    {"en": "Home Economics", "ar": "الاقتصاد المنزلي"},
+    {"en": "Hotel and Home Economics", "ar": "الفندقي و الاقتصاد المنزلي"},
+    {"en": "Information Technology (IT)", "ar": "تكنولوجيا المعلومات"},
+
 ]
 
 PRESEEDED_UNIVERSITIES = [
